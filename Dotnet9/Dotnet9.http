@@ -1,0 +1,38 @@
+@rootAddress = http://localhost:5256
+
+GET {{rootAddress}}/weatherforecast/
+Accept: application/json
+
+###
+GET {{rootAddress}}/api/Malls/
+Accept: application/json
+
+###
+GET {{rootAddress}}/api/Malls/3
+Accept: application/json
+
+###
+POST {{rootAddress}}/api/Malls/
+Content-Type: application/json
+
+{
+   "id": 0,
+  "name": "Pheonix Mall",
+  "location": "Velacherry",
+  "floors": 5
+}
+
+###
+PUT {{rootAddress}}/api/Malls/4
+Content-Type: application/json
+
+{
+   "id": 4,
+  "name": "Pheonix Mall",
+  "location": "Velachary",
+  "floors": 6
+}
+
+###
+DELETE {{rootAddress}}/api/Malls/4
+
