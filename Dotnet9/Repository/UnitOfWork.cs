@@ -8,12 +8,14 @@ namespace Dotnet9.Repository
         private readonly ApplicationDbContext _db;
         public IMallsRepository Malls { get; }
         public IShops Shops { get; }
+        public IMallOwnerRepo MallOwners { get; }
 
         public UnitOfWork(ApplicationDbContext db)
         {
             _db = db;
             Malls = new MallsRepository(_db);
             Shops = new Shops(_db);
+            MallOwners = new MallOwnerRepo(_db);
         }
 
         public void Dispose()

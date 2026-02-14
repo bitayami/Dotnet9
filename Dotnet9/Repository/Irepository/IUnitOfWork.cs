@@ -4,6 +4,7 @@
     {
         IMallsRepository Malls { get; }
         IShops Shops { get; }
+        IMallOwnerRepo MallOwners { get; }
         Task<int> Save();
     }
 }

@@ -25,7 +25,11 @@ namespace Dotnet9.Repository
         public async Task<IEnumerable<T>> GetAll()
         =>
             await _dbSet.ToListAsync();
-        
+
+        //public Task<IEnumerable<T>> GetAll(string includeProperties)
+        //=>
+        //    await _dbSet.Include(m=> m.MallOwner).ToListAsync();
+
 
         public async Task<T> GetById(int id)
         =>
