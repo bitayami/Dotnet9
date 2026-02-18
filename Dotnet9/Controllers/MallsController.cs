@@ -30,7 +30,7 @@ namespace Dotnet9.Controllers
         public async Task<ActionResult> GetMalls()
         {
             //return Ok(await _context.Malls.ToListAsync());
-            return Ok(await _uow.Malls.GetAll());
+            return Ok(await _uow.Malls.GetAll("MallOwner,Shops"));
         }
 
         [HttpGet("{id:int}")]

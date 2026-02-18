@@ -18,12 +18,12 @@ namespace Dotnet9.Controllers
         [HttpGet]
         public async Task<ActionResult> GetShops()
         {
-            return Ok(await _uow.Shops.GetAll());
+            return Ok(await _uow.Shops.GetAll("Mall,Customers"));
         }
         [HttpGet("{id:int}")]
         public async Task<ActionResult> GetShop(int id)
         {
-            var shop = await _uow.Shops.GetById(id);
+            var shop = await _uow.Shops.GetById(s => s.Id == id, includeProperties: "Mall,Customers");
             return shop is null ? NotFound() : Ok(shop);
         }
         [HttpPost]

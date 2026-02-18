@@ -9,6 +9,7 @@ namespace Dotnet9.Repository
         public IMallsRepository Malls { get; }
         public IShops Shops { get; }
         public IMallOwnerRepo MallOwners { get; }
+        public ICustomerRepo Customers {  get; }
 
         public UnitOfWork(ApplicationDbContext db)
         {
@@ -16,6 +17,7 @@ namespace Dotnet9.Repository
             Malls = new MallsRepository(_db);
             Shops = new Shops(_db);
             MallOwners = new MallOwnerRepo(_db);
+            Customers = new CustomerRepo(_db);
         }
 
         public void Dispose()

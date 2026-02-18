@@ -3,6 +3,7 @@ using Dotnet9.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dotnet9.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260215061005_NullCheckAddedInMall")]
+    partial class NullCheckAddedInMall
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,58 +23,6 @@ namespace Dotnet9.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("CustomerMall", b =>
-                {
-                    b.Property<int>("CustomersId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MallsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CustomersId", "MallsId");
-
-                    b.HasIndex("MallsId");
-
-                    b.ToTable("MallCustomers", (string)null);
-                });
-
-            modelBuilder.Entity("CustomerShop", b =>
-                {
-                    b.Property<int>("CustomersId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ShopsId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CustomersId", "ShopsId");
-
-                    b.HasIndex("ShopsId");
-
-                    b.ToTable("CustomerShop", (string)null);
-                });
-
-            modelBuilder.Entity("Dotnet9.Models.Customer", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("PhoneNumber")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ShopId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Customers", (string)null);
-                });
 
             modelBuilder.Entity("Dotnet9.Models.Mall", b =>
                 {
@@ -94,7 +45,7 @@ namespace Dotnet9.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Malls", (string)null);
+                    b.ToTable("Malls");
 
                     b.HasData(
                         new
@@ -144,7 +95,7 @@ namespace Dotnet9.Migrations
                     b.HasIndex("MallId")
                         .IsUnique();
 
-                    b.ToTable("MallOwners", (string)null);
+                    b.ToTable("MallOwners");
                 });
 
             modelBuilder.Entity("Dotnet9.Models.Shop", b =>
@@ -154,9 +105,6 @@ namespace Dotnet9.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CustomersId")
-                        .HasColumnType("int");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -171,37 +119,7 @@ namespace Dotnet9.Migrations
 
                     b.HasIndex("MallId");
 
-                    b.ToTable("Shops", (string)null);
-                });
-
-            modelBuilder.Entity("CustomerMall", b =>
-                {
-                    b.HasOne("Dotnet9.Models.Customer", null)
-                        .WithMany()
-                        .HasForeignKey("CustomersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Dotnet9.Models.Mall", null)
-                        .WithMany()
-                        .HasForeignKey("MallsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
-            modelBuilder.Entity("CustomerShop", b =>
-                {
-                    b.HasOne("Dotnet9.Models.Customer", null)
-                        .WithMany()
-                        .HasForeignKey("CustomersId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Dotnet9.Models.Shop", null)
-                        .WithMany()
-                        .HasForeignKey("ShopsId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
+                    b.ToTable("Shops");
                 });
 
             modelBuilder.Entity("Dotnet9.Models.MallOwner", b =>

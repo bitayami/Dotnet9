@@ -1,6 +1,7 @@
 ﻿using Dotnet9.Data;
 using Dotnet9.Repository.Irepository;
 using Microsoft.EntityFrameworkCore;
+using System.Linq.Expressions;
 
 namespace Dotnet9.Repository
 {
@@ -26,16 +27,39 @@ namespace Dotnet9.Repository
         =>
             await _dbSet.ToListAsync();
 
-        //public Task<IEnumerable<T>> GetAll(string includeProperties)
-        //=>
-        //    await _dbSet.Include(m=> m.MallOwner).ToListAsync();
+        public async Task<IEnumerable<T>> GetAll(string? includeProperties = null)
+        {
+            IQueryable<T> query = _dbSet.AsNoTracking();
+
+            if (includeProperties != null)
+            {
+                var entries = includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var includeProp in entries)
+                {
+                    query = query.Include(includeProp.Trim());
+                }
+            }
+            return await query.ToListAsync();
+        }
 
 
         public async Task<T> GetById(int id)
         =>
             await _dbSet.FindAsync(id);
         
-
+        public async Task<T> GetById(Expression<Func<T, bool>> filter, string? includeProperties = null)
+        {
+            IQueryable<T> query = _dbSet.AsNoTracking();
+            if (includeProperties != null)
+            {
+                var entries = includeProperties.Split(new char[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+                foreach (var includeProp in entries)
+                {
+                    query = query.Include(includeProp.Trim());
+                }
+            }
+            return await query.FirstOrDefaultAsync(filter);
+        }
         public void Update(T entity)
         =>
             _db.Update(entity);

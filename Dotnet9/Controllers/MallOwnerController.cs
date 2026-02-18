@@ -23,16 +23,17 @@ namespace Dotnet9.Controllers
         public async Task<ActionResult> GetMallOwners()
         {
             //var mallOwners = await _uow.MallOwners.GetAll();
-            //var mallOwners = await _uow.MallOwners.GetAll(includeProperties: "Mall");
-            var mallOwners = await _db.MallOwners.Include(m => m.Mall).ToListAsync();
+            var mallOwners = await _uow.MallOwners.GetAll(includeProperties: "Mall");
+            //var mallOwners = await _db.MallOwners.Include(m => m.Mall).ToListAsync();
             return Ok(mallOwners);
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult> GetMallOwner(int id)
         {
-            var mallOwner = await _uow.MallOwners.GetById(id);
-            return Ok(mallOwner == null ? NotFound() : Ok(mallOwner));
+            //var mallOwner = await _uow.MallOwners.GetById(id);
+            var mallOwner = await _uow.MallOwners.GetById(i => i.Id == id, "Mall");
+            return Ok(mallOwner is null ? NotFound() : Ok(mallOwner));
         }
 
         [HttpPost]

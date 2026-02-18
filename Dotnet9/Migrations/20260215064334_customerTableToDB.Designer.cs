@@ -3,6 +3,7 @@ using Dotnet9.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dotnet9.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260215064334_customerTableToDB")]
+    partial class customerTableToDB
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -48,7 +51,7 @@ namespace Dotnet9.Migrations
 
                     b.HasIndex("ShopsId");
 
-                    b.ToTable("CustomerShop", (string)null);
+                    b.ToTable("CustomerShop");
                 });
 
             modelBuilder.Entity("Dotnet9.Models.Customer", b =>
@@ -70,7 +73,7 @@ namespace Dotnet9.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Customers", (string)null);
+                    b.ToTable("Customers");
                 });
 
             modelBuilder.Entity("Dotnet9.Models.Mall", b =>
@@ -94,7 +97,7 @@ namespace Dotnet9.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Malls", (string)null);
+                    b.ToTable("Malls");
 
                     b.HasData(
                         new
@@ -144,7 +147,7 @@ namespace Dotnet9.Migrations
                     b.HasIndex("MallId")
                         .IsUnique();
 
-                    b.ToTable("MallOwners", (string)null);
+                    b.ToTable("MallOwners");
                 });
 
             modelBuilder.Entity("Dotnet9.Models.Shop", b =>
@@ -171,7 +174,7 @@ namespace Dotnet9.Migrations
 
                     b.HasIndex("MallId");
 
-                    b.ToTable("Shops", (string)null);
+                    b.ToTable("Shops");
                 });
 
             modelBuilder.Entity("CustomerMall", b =>
