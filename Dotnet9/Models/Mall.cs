@@ -9,6 +9,8 @@
         public MallOwner? MallOwner { get; set; }
         public List<Shop>? Shops { get; set; }
         public List<Customer>? Customers { get; set; }
+        public ICollection<CustomerMalls>? CustomerMalls { get; set; }
+
 
     }
 }

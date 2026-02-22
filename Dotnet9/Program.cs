@@ -21,6 +21,7 @@ builder.Services.AddTransient<ITransient, Transient>();
 builder.Services.AddScoped<IScoped, Scoped>();
 builder.Services.AddSingleton<ISingleton, Singleton>();
 builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
 

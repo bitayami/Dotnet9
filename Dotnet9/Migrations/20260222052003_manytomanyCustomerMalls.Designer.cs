@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dotnet9.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20260215064334_customerTableToDB")]
-    partial class customerTableToDB
+    [Migration("20260222052003_manytomanyCustomerMalls")]
+    partial class manytomanyCustomerMalls
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,7 +51,7 @@ namespace Dotnet9.Migrations
 
                     b.HasIndex("ShopsId");
 
-                    b.ToTable("CustomerShop");
+                    b.ToTable("CustomerShops", (string)null);
                 });
 
             modelBuilder.Entity("Dotnet9.Models.Customer", b =>
@@ -68,12 +68,24 @@ namespace Dotnet9.Migrations
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("ShopId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
+                });
+
+            modelBuilder.Entity("Dotnet9.Models.CustomerMalls", b =>
+                {
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("MallId")
+                        .HasColumnType("int");
+
+                    b.HasKey("CustomerId", "MallId");
+
+                    b.HasIndex("MallId");
+
+                    b.ToTable("CustomerMalls");
                 });
 
             modelBuilder.Entity("Dotnet9.Models.Mall", b =>
@@ -158,9 +170,6 @@ namespace Dotnet9.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int?>("CustomersId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
@@ -207,6 +216,25 @@ namespace Dotnet9.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Dotnet9.Models.CustomerMalls", b =>
+                {
+                    b.HasOne("Dotnet9.Models.Customer", "Customer")
+                        .WithMany("CustomerMalls")
+                        .HasForeignKey("CustomerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Dotnet9.Models.Mall", "Mall")
+                        .WithMany("CustomerMalls")
+                        .HasForeignKey("MallId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customer");
+
+                    b.Navigation("Mall");
+                });
+
             modelBuilder.Entity("Dotnet9.Models.MallOwner", b =>
                 {
                     b.HasOne("Dotnet9.Models.Mall", "Mall")
@@ -229,8 +257,15 @@ namespace Dotnet9.Migrations
                     b.Navigation("Mall");
                 });
 
+            modelBuilder.Entity("Dotnet9.Models.Customer", b =>
+                {
+                    b.Navigation("CustomerMalls");
+                });
+
             modelBuilder.Entity("Dotnet9.Models.Mall", b =>
                 {
+                    b.Navigation("CustomerMalls");
+
                     b.Navigation("MallOwner");
 
                     b.Navigation("Shops");

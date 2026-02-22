@@ -7,7 +7,7 @@
         public string? Description { get; set; }
         public int MallId { get; set; }
         public Mall? Mall { get; set; }
-        public int? CustomersId { get; set; }
+        //public int? CustomersId { get; set; }
         public List<Customer>? Customers { get; set; }
     }
 }

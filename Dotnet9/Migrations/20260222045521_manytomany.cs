@@ -5,17 +5,11 @@
 namespace Dotnet9.Migrations
 {
     /// <inheritdoc />
-    public partial class customerTableToDB : Migration
+    public partial class manytomany : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.AddColumn<int>(
-                name: "CustomersId",
-                table: "Shops",
-                type: "int",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "Customers",
                 columns: table => new
@@ -23,8 +17,7 @@ namespace Dotnet9.Migrations
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ShopId = table.Column<int>(type: "int", nullable: true)
+                    PhoneNumber = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -32,7 +25,7 @@ namespace Dotnet9.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "CustomerShop",
+                name: "CustomerShops",
                 columns: table => new
                 {
                     CustomersId = table.Column<int>(type: "int", nullable: false),
@@ -40,15 +33,15 @@ namespace Dotnet9.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_CustomerShop", x => new { x.CustomersId, x.ShopsId });
+                    table.PrimaryKey("PK_CustomerShops", x => new { x.CustomersId, x.ShopsId });
                     table.ForeignKey(
-                        name: "FK_CustomerShop_Customers_CustomersId",
+                        name: "FK_CustomerShops_Customers_CustomersId",
                         column: x => x.CustomersId,
                         principalTable: "Customers",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_CustomerShop_Shops_ShopsId",
+                        name: "FK_CustomerShops_Shops_ShopsId",
                         column: x => x.ShopsId,
                         principalTable: "Shops",
                         principalColumn: "Id",
@@ -80,8 +73,8 @@ namespace Dotnet9.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_CustomerShop_ShopsId",
-                table: "CustomerShop",
+                name: "IX_CustomerShops_ShopsId",
+                table: "CustomerShops",
                 column: "ShopsId");
 
             migrationBuilder.CreateIndex(
@@ -94,17 +87,13 @@ namespace Dotnet9.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "CustomerShop");
+                name: "CustomerShops");
 
             migrationBuilder.DropTable(
                 name: "MallCustomers");
 
             migrationBuilder.DropTable(
                 name: "Customers");
-
-            migrationBuilder.DropColumn(
-                name: "CustomersId",
-                table: "Shops");
         }
     }
 }

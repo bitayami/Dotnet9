@@ -3,6 +3,7 @@ using Dotnet9.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Dotnet9.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260222045521_manytomany")]
+    partial class manytomany
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -51,48 +54,6 @@ namespace Dotnet9.Migrations
                     b.ToTable("CustomerShops", (string)null);
                 });
 
-            modelBuilder.Entity("Dotnet9.Models.Courses", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("StudentId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("StudentId");
-
-                    b.ToTable("Courses");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Mathematics",
-                            StudentId = 1
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Physics",
-                            StudentId = 1
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Chemistry",
-                            StudentId = 2
-                        });
-                });
-
             modelBuilder.Entity("Dotnet9.Models.Customer", b =>
                 {
                     b.Property<int>("Id")
@@ -110,21 +71,6 @@ namespace Dotnet9.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Customers");
-                });
-
-            modelBuilder.Entity("Dotnet9.Models.CustomerMalls", b =>
-                {
-                    b.Property<int>("CustomerId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("MallId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CustomerId", "MallId");
-
-                    b.HasIndex("MallId");
-
-                    b.ToTable("CustomerMalls");
                 });
 
             modelBuilder.Entity("Dotnet9.Models.Mall", b =>
@@ -225,40 +171,6 @@ namespace Dotnet9.Migrations
                     b.ToTable("Shops");
                 });
 
-            modelBuilder.Entity("Dotnet9.Models.Student", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Students");
-
-                    b.HasData(
-                        new
-                        {
-                            Id = 1,
-                            Name = "Alice"
-                        },
-                        new
-                        {
-                            Id = 2,
-                            Name = "Bob"
-                        },
-                        new
-                        {
-                            Id = 3,
-                            Name = "Charlie"
-                        });
-                });
-
             modelBuilder.Entity("CustomerMall", b =>
                 {
                     b.HasOne("Dotnet9.Models.Customer", null)
@@ -289,36 +201,6 @@ namespace Dotnet9.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Dotnet9.Models.Courses", b =>
-                {
-                    b.HasOne("Dotnet9.Models.Student", "Student")
-                        .WithMany("courses")
-                        .HasForeignKey("StudentId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Student");
-                });
-
-            modelBuilder.Entity("Dotnet9.Models.CustomerMalls", b =>
-                {
-                    b.HasOne("Dotnet9.Models.Customer", "Customer")
-                        .WithMany("CustomerMalls")
-                        .HasForeignKey("CustomerId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Dotnet9.Models.Mall", "Mall")
-                        .WithMany("CustomerMalls")
-                        .HasForeignKey("MallId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Customer");
-
-                    b.Navigation("Mall");
-                });
-
             modelBuilder.Entity("Dotnet9.Models.MallOwner", b =>
                 {
                     b.HasOne("Dotnet9.Models.Mall", "Mall")
@@ -341,23 +223,11 @@ namespace Dotnet9.Migrations
                     b.Navigation("Mall");
                 });
 
-            modelBuilder.Entity("Dotnet9.Models.Customer", b =>
-                {
-                    b.Navigation("CustomerMalls");
-                });
-
             modelBuilder.Entity("Dotnet9.Models.Mall", b =>
                 {
-                    b.Navigation("CustomerMalls");
-
                     b.Navigation("MallOwner");
 
                     b.Navigation("Shops");
-                });
-
-            modelBuilder.Entity("Dotnet9.Models.Student", b =>
-                {
-                    b.Navigation("courses");
                 });
 #pragma warning restore 612, 618
         }
