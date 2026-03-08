@@ -1,3 +1,4 @@
+using Dotnet9.Data;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dotnet9.Controllers
@@ -12,10 +13,12 @@ namespace Dotnet9.Controllers
         };
 
         private readonly ILogger<WeatherForecastController> _logger;
+        private readonly ApplicationDbContext _db;
 
-        public WeatherForecastController(ILogger<WeatherForecastController> logger)
+        public WeatherForecastController(ILogger<WeatherForecastController> logger, ApplicationDbContext db)
         {
             _logger = logger;
+            _db = db;
         }
 
         [HttpGet(Name = "GetWeatherForecast")]

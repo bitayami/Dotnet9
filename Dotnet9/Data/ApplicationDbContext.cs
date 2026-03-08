@@ -1,9 +1,10 @@
 ﻿using Dotnet9.Models;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 
 namespace Dotnet9.Data
 {
-    public class ApplicationDbContext : DbContext
+    public class ApplicationDbContext : IdentityDbContext
     {
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
@@ -18,6 +19,8 @@ namespace Dotnet9.Data
 
         public DbSet<Student> Students { get; set; }
         public DbSet<Courses> Courses { get; set; }
+
+        public DbSet<AppUser> AppUsers { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
