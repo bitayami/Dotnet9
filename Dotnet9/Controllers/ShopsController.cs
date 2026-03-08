@@ -1,5 +1,6 @@
 ﻿using Dotnet9.Models;
 using Dotnet9.Repository.Irepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,7 +15,7 @@ namespace Dotnet9.Controllers
         {
             _uow = uow;
         }
-
+        [Authorize(Roles ="Admin")]
         [HttpGet]
         public async Task<ActionResult> GetShops()
         {

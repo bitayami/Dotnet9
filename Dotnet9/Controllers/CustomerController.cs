@@ -1,10 +1,13 @@
 ﻿using Dotnet9.Models;
 using Dotnet9.Repository.Irepository;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dotnet9.Controllers
 {
+    //[Authorize(Roles = "Admin")]
+    [Authorize(Policy = "AdminOnly")]
     [Route("api/[controller]")]
     [ApiController]
     public class CustomerController : ControllerBase

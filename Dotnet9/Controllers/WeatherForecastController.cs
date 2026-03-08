@@ -1,4 +1,5 @@
 using Dotnet9.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Dotnet9.Controllers
@@ -21,6 +22,7 @@ namespace Dotnet9.Controllers
             _db = db;
         }
 
+        [Authorize(Roles = "MallOwner")]
         [HttpGet(Name = "GetWeatherForecast")]
         public IEnumerable<WeatherForecast> Get()
         {
