@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Dotnet9.Data;
+using Dotnet9.Middleware;
 using Dotnet9.Models;
 using Dotnet9.Models.DTO;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +32,8 @@ namespace Dotnet9.Controllers
             var course = _db.Courses.Find(id);
             if (course == null)
             {
-                return NotFound();
+                //throw new NotFoundException("Course id is not found from Exception");
+                return NotFound("Courses not found");
             }
             return Ok(course);
         }

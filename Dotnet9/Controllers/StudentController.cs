@@ -33,9 +33,17 @@ namespace Dotnet9.Controllers
             //}
 
             //Eager
-            var students = _db.Students.Include(s => s.courses).ToList();
-            return Ok(students);
 
+            //try
+            //{
+                throw new Exception("Students data are null");
+                var students = _db.Students.Include(s => s.courses).ToList();
+                return Ok(students);
+
+            //}catch(Exception ex)
+            //{
+            //    return StatusCode(500, ex.Message);
+            //}
             // Explicit loading
             //Student? student = _db.Students.FirstOrDefault(x => x.Id == 1);
             //_db.Entry(student).Collection(s => s.courses).Load();

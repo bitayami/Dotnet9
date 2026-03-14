@@ -141,5 +141,15 @@ namespace Dotnet9.Controllers
             }
             return BadRequest(result.Errors);
         }
+
+        [HttpGet("error")]
+        public IActionResult AddError()
+        {
+            int x = 15;
+            int y = 0;
+            var res = x / y;
+
+            return Ok(res);
+        }
     }
 }

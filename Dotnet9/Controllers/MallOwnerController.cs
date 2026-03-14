@@ -1,4 +1,5 @@
 ﻿using Dotnet9.Data;
+using Dotnet9.Middleware;
 using Dotnet9.Models;
 using Dotnet9.Repository.Irepository;
 using Microsoft.AspNetCore.Authorization;
@@ -20,8 +21,9 @@ namespace Dotnet9.Controllers
             _uow = uow;
             _db = db;
         }
-        //[Authorize(Roles = "MallOwner")]
-        [Authorize(Policy = "AdminOnly")]
+        [Authorize(Roles = "MallOwner")]
+        //[Authorize(Policy = "AdminOnly")]
+        //[Authorize]
         [HttpGet]  
         public async Task<ActionResult> GetMallOwners()
         {

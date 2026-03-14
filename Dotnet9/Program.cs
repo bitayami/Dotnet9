@@ -1,10 +1,13 @@
 using Dotnet9.Data;
+using Dotnet9.Middleware;
 using Dotnet9.Models;
 using Dotnet9.Repository;
 using Dotnet9.Repository.Irepository;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Scalar.AspNetCore;
@@ -94,6 +97,49 @@ builder.Services.AddAuthentication(options =>
 
             RoleClaimType = ClaimTypes.Role
         };
+
+        a.Events = new JwtBearerEvents
+        {
+            OnChallenge = async context =>
+            {
+                context.HandleResponse();
+
+                context.Response.StatusCode = 401;
+                context.Response.ContentType = "application/json";
+
+                var response = new ProblemDetails
+                {
+                    Status = 401,
+                    Title = "Unauthorized",
+                    Detail = "mall owner dont have access",
+                    Instance = context.HttpContext.Request.Path
+                };
+
+                response.Extensions["traceId"] =
+                    context.HttpContext.TraceIdentifier;
+
+                await context.Response.WriteAsJsonAsync(response);
+            },
+
+            OnForbidden = async context =>
+            {
+                context.Response.StatusCode = 403;
+                context.Response.ContentType = "application/json";
+
+                var problemDetails = new ProblemDetails
+                {
+                    Status = 403,
+                    Title = "Forbidden",
+                    Detail = "You do not have permission to access this resource",
+                    Instance = context.HttpContext.Request.Path
+                };
+
+                problemDetails.Extensions["traceId"] =
+                    context.HttpContext.TraceIdentifier;
+
+                await context.Response.WriteAsJsonAsync(problemDetails);
+            }
+        };
     });
 
 
@@ -103,6 +149,8 @@ builder.Services.AddAuthorization(options =>
     policy.RequireRole("Admin"));
 });
 
+builder.Services.AddExceptionHandler<GlobalExceptionHandler>();
+builder.Services.AddProblemDetails();
 
 
 var app = builder.Build();
@@ -121,6 +169,10 @@ app.UseHttpsRedirection();
 #region CORS
 app.UseCors();
 #endregion
+
+//app.UseMiddleware<ExceptionMiddleware>();
+
+app.UseExceptionHandler();
 
 app.UseAuthentication();
 
