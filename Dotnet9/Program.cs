@@ -1,3 +1,4 @@
+using Asp.Versioning;
 using Dotnet9.Data;
 using Dotnet9.Middleware;
 using Dotnet9.Models;
@@ -10,13 +11,64 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using NLog;
+using NLog.Web;
 using Scalar.AspNetCore;
+using Serilog;
 using System.Security.Claims;
 using System.Text;
+
+
+
+var logger = LogManager.Setup()
+    .LoadConfigurationFromFile("nlog.config")
+    .GetCurrentClassLogger();
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+//builtin logger
+builder.Logging.ClearProviders();
+//builder.Logging.AddConsole();
+//builder.Logging.AddDebug();
+
+
+//serilog
+//Log.Logger = new LoggerConfiguration()
+//    .ReadFrom.Configuration(builder.Configuration)
+//    .Enrich.FromLogContext()
+//    .Enrich.WithMachineName()
+//    .Enrich.WithThreadId()
+//    .Enrich.WithProcessId()
+//    .WriteTo.Console(outputTemplate: "[{Timestamp:HH:mm:ss} {Level:u3}] {SourceContext} -{Message:lj}{NewLine}{Exception}")
+//    .WriteTo.File(
+//        path: "Serilogs/dotnet9-api-.log",
+//        rollingInterval: RollingInterval.Day,
+//        retainedFileCountLimit: 7,
+//        outputTemplate: "[{Timestamp:yyyy-MM-dd HH:mm:ss} {Level:u3}] {SourceContext} -{Message:lj}{NewLine}{Exception}"
+//    ).CreateLogger();
+
+//builder.Host.UseSerilog();
+
+builder.Host.UseNLog();
+
+builder.Services.AddApiVersioning(o =>
+{
+    o.DefaultApiVersion = new ApiVersion(1, 0);
+    o.AssumeDefaultVersionWhenUnspecified = true;
+    o.ReportApiVersions = true;
+
+    o.ApiVersionReader = ApiVersionReader.Combine(
+        new UrlSegmentApiVersionReader(),// api/v1/courses
+        new HeaderApiVersionReader("x-api-version"), //header
+        new QueryStringApiVersionReader("api-version") //?api-version = 1.0
+        );
+}).AddApiExplorer(a =>
+{
+    a.GroupNameFormat = "'v'VVV"; //v1,v2
+    a.SubstituteApiVersionInUrl = true;
+});
+
 
 builder.Services.AddControllers().AddJsonOptions(opt => 
 opt.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
@@ -25,6 +77,17 @@ opt.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.Refe
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen(s =>
 {
+    s.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "Dotnet9 Api v1",
+        Version = "v1"
+    });
+
+    s.SwaggerDoc("v2", new OpenApiInfo
+    {
+        Title = "Dotnet9 Api v1",
+        Version = "v2"
+    });
     s.AddSecurityDefinition("Bearer", (new OpenApiSecurityScheme
     {
         Name = "Authorization",
@@ -178,8 +241,24 @@ app.UseAuthentication();
 
 app.UseAuthorization();
 
+//app.UseSerilogRequestLogging();//automatically creates log for all http req
+
 app.MapControllers();
 
 //app.MapGroup("/api").MapIdentityApi<AppUser>();
 
-app.Run();
+//serilog
+try
+{
+    app.Run();
+}
+catch(Exception ex)
+{
+    //Log.Fatal(ex, "Application terminated");
+    logger.Fatal(ex, "Application terminated unexpectely");
+}
+finally
+{
+    //Log.CloseAndFlush();
+    LogManager.Shutdown();
+}

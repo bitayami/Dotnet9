@@ -20,33 +20,42 @@ namespace Dotnet9.Controllers
         //};
 
         private readonly IUnitOfWork _uow;
+        private readonly ILogger<MallsController> _logger;
 
-        public MallsController(IUnitOfWork uow)
+        public MallsController(IUnitOfWork uow, ILogger<MallsController> logger)
         {
             _uow = uow;
+            _logger = logger;
         }
 
         [HttpGet]
         public async Task<ActionResult> GetMalls()
         {
             //return Ok(await _context.Malls.ToListAsync());
-            return Ok(await _uow.Malls.GetAll("MallOwner,Shops,Customers"));
+            _logger.LogInformation("Fetching all malls at {Time}",DateTime.Now);
+            var malls = await _uow.Malls.GetAll("MallOwner,Shops,Customers");
+            _logger.LogInformation("Retrived all {Count} malls", malls.Count());
+            return Ok(malls);
         }
 
         [HttpGet("{id:int}")]
         public async Task<ActionResult<Mall>> GetMall(int id)
         {
             //var mall = _context.Malls.FirstOrDefault(m => m.Id == id);
+            _logger.LogDebug("GetMallbyId = {@id}",id);
+            var mall = await _uow.Malls.GetById(id);
 
-            //if (mall == null)
-            //{
-            //    return NotFound();
-            //}
-            //return Ok(mall);
+            if (mall == null)
+            {
+                _logger.LogError("Mall with id = {id} is not in DB", id);
+                return NotFound();
+            }
+            _logger.LogInformation("Successfully retrieved mall name = {name}",mall.Name);
+            return Ok(mall);
             //var mall = await _context.Malls.FindAsync(id);
             //return mall is null ? NotFound() : Ok(mall);
-            var mall = await _uow.Malls.GetById(id);
-            return mall is null ? NotFound() : Ok(mall);
+            //var mall = await _uow.Malls.GetById(id);
+            //return mall is null ? NotFound() : Ok(mall);
         }
         [HttpPost]
         public async Task<ActionResult<Mall>> CreateMall(Mall mall)
@@ -59,6 +68,14 @@ namespace Dotnet9.Controllers
             //_context.Malls.Add(mall);
             //await _context.SaveChangesAsync();
             //return Ok("Mall created succesfully");
+
+            using var scope = _logger.BeginScope(new Dictionary<string, object>
+            {
+                ["Operation"] = "CreateMall",
+                ["MallName"] = mall.Name,
+                ["RequestedBy"] = HttpContext.User.Identity?.Name ?? "anonymous"
+            });
+
             await _uow.Malls.Add(mall);
             await _uow.Save();
             return Ok("Mall created succesfully");
@@ -102,14 +119,18 @@ namespace Dotnet9.Controllers
             //_context.Malls.Remove(mall);
             //await _context.SaveChangesAsync();
             //return NoContent();
+            _logger.LogWarning("DeleteMallbyId = {@id}", id);
 
             var mall = await _uow.Malls.GetById(id);
             if (mall == null)
             {
+                _logger.LogError("Mall with id = {id} is not in DB", id);
                 return NotFound();
             }
             _uow.Malls.Delete(mall);
             await _uow.Save();
+            _logger.LogCritical("AUDIT: Mall id = {id} deleted by user = {user} at {time}",
+                id,HttpContext.User.Identity?.Name ?? "anonymous",DateTime.Now);
             return NoContent();
         }
     }

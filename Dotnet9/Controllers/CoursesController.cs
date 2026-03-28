@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using Asp.Versioning;
+using AutoMapper;
 using Dotnet9.Data;
 using Dotnet9.Middleware;
 using Dotnet9.Models;
@@ -8,8 +9,11 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Dotnet9.Controllers
 {
-    [Route("api/[controller]")]
+    //[Route("api/[controller]")]
     [ApiController]
+    [ApiVersion("1.0")]
+    [ApiVersion("2.0")]
+    [Route("api/v{version:apiVersion}/[controller]")]//api/v1/courses
     public class CoursesController : ControllerBase
     {
         private readonly ApplicationDbContext _db;
@@ -21,11 +25,21 @@ namespace Dotnet9.Controllers
         }
 
         [HttpGet]
+        [MapToApiVersion("1.0")]
         public IActionResult GetCourses()
         {
             var courses = _db.Courses.ToList();
             return Ok(courses);
         }
+
+        [HttpGet]
+        [MapToApiVersion("2.0")]
+        public IActionResult GetCoursesV2()
+        {
+            var courses = _db.Courses.ToList();
+            return Ok(courses);
+        }
+
         [HttpGet("{id:int}")]
         public IActionResult GetCourse(int id)
         {
