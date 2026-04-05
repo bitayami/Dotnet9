@@ -7,6 +7,7 @@
         IMallOwnerRepo MallOwners { get; }
         ICustomerRepo Customers { get; }
         ICustomerMallsRepo CustomerMalls { get; }
+        IMallDocumentRepo MallDocuments { get; }
         Task<int> Save();
     }
 }

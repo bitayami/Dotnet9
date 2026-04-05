@@ -22,6 +22,8 @@ namespace Dotnet9.Data
 
         public DbSet<AppUser> AppUsers { get; set; }
 
+        public DbSet<MallDocument> MallDocuments { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
             {
                 base.OnModelCreating(modelBuilder);

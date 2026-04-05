@@ -10,7 +10,6 @@
         public List<Shop>? Shops { get; set; }
         public List<Customer>? Customers { get; set; }
         public ICollection<CustomerMalls>? CustomerMalls { get; set; }
-
-
+        public List<MallDocument>? Documents { get; set; }
     }
 }

@@ -175,6 +175,46 @@ namespace Dotnet9.Migrations
                         });
                 });
 
+            modelBuilder.Entity("Dotnet9.Models.MallDocument", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("ContentType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FilePath")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<long>("FileSizeBytes")
+                        .HasColumnType("bigint");
+
+                    b.Property<int>("MallId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("SavedFileName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("UploadedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("MallId");
+
+                    b.ToTable("MallDocuments");
+                });
+
             modelBuilder.Entity("Dotnet9.Models.MallOwner", b =>
                 {
                     b.Property<int>("Id")
@@ -538,6 +578,17 @@ namespace Dotnet9.Migrations
                     b.Navigation("Mall");
                 });
 
+            modelBuilder.Entity("Dotnet9.Models.MallDocument", b =>
+                {
+                    b.HasOne("Dotnet9.Models.Mall", "Mall")
+                        .WithMany("Documents")
+                        .HasForeignKey("MallId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Mall");
+                });
+
             modelBuilder.Entity("Dotnet9.Models.MallOwner", b =>
                 {
                     b.HasOne("Dotnet9.Models.Mall", "Mall")
@@ -619,6 +670,8 @@ namespace Dotnet9.Migrations
             modelBuilder.Entity("Dotnet9.Models.Mall", b =>
                 {
                     b.Navigation("CustomerMalls");
+
+                    b.Navigation("Documents");
 
                     b.Navigation("MallOwner");
 
