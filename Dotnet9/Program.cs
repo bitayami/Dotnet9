@@ -228,6 +228,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
+app.MapOpenApi();
+app.UseSwagger();
+app.UseSwaggerUI();
+
 app.UseHttpsRedirection();
 
 #region CORS
