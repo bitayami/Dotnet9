@@ -252,6 +252,24 @@ app.MapControllers();
 
 //app.MapGroup("/api").MapIdentityApi<AppUser>();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    try
+    {
+        var context = services.GetRequiredService<ApplicationDbContext>();
+        if (context.Database.GetPendingMigrations().Any())
+        {
+            context.Database.Migrate();
+        }
+    }
+    catch (Exception ex)
+    {
+        var logr = services.GetRequiredService<ILogger<Program>>();
+        logr.LogError(ex, "An error occurred while migrating the database.");
+    }
+}
+
 //serilog
 try
 {
