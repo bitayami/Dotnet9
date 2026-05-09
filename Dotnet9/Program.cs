@@ -70,11 +70,11 @@ builder.Services.AddApiVersioning(o =>
 });
 
 
-builder.Services.AddControllers().AddJsonOptions(opt => 
+builder.Services.AddControllers().AddJsonOptions(opt =>
 opt.JsonSerializerOptions.ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles);
 
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+//builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen(s =>
 {
     s.SwaggerDoc("v1", new OpenApiInfo
@@ -120,7 +120,7 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseSqlSer
 builder.Services.AddTransient<ITransient, Transient>();
 builder.Services.AddScoped<IScoped, Scoped>();
 builder.Services.AddSingleton<ISingleton, Singleton>();
-builder.Services.AddScoped<IUnitOfWork,UnitOfWork>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 builder.Services.AddIdentity<AppUser, IdentityRole>()
@@ -153,7 +153,7 @@ builder.Services.AddAuthentication(options =>
 
             ValidateLifetime = true,
             ClockSkew = TimeSpan.Zero,
-            
+
             ValidateIssuerSigningKey = true,
             IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(
                 builder.Configuration["jwt:Key"]!)),
@@ -223,12 +223,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     //app.MapScalarApiReference();
-    app.MapOpenApi();
+    //app.MapOpenApi();
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
-app.MapOpenApi();
+//app.MapOpenApi();
 app.UseSwagger();
 app.UseSwaggerUI();
 
@@ -255,27 +255,17 @@ app.MapControllers();
 using (var scope = app.Services.CreateScope())
 {
     var services = scope.ServiceProvider;
-    try
-    {
-        var context = services.GetRequiredService<ApplicationDbContext>();
-        if (context.Database.GetPendingMigrations().Any())
-        {
-            context.Database.Migrate();
-        }
-    }
-    catch (Exception ex)
-    {
-        var logr = services.GetRequiredService<ILogger<Program>>();
-        logr.LogError(ex, "An error occurred while migrating the database.");
-    }
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    context.Database.Migrate();
 }
+
 
 //serilog
 try
 {
     app.Run();
 }
-catch(Exception ex)
+catch (Exception ex)
 {
     //Log.Fatal(ex, "Application terminated");
     logger.Fatal(ex, "Application terminated unexpectely");
