@@ -27,7 +27,7 @@ var logger = LogManager.Setup()
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-//builtin logger
+// builtin logger
 builder.Logging.ClearProviders();
 //builder.Logging.AddConsole();
 //builder.Logging.AddDebug();
